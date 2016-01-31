@@ -1,11 +1,14 @@
 # -- BOARD INFO HERE --
 
-wordLength = 4
-hint = ""
+wordLengths = [4,7,5,4,5]
+known = ["", "", "", "", ""]
 
 board = []
-board.append(["s","h"])
-board.append(["i","t"])
+board.append(list("eakeh"))
+board.append(list("rtspa"))
+board.append(list("ochet"))
+board.append(list("shtec"))
+board.append(list("tomdh"))
 
 # -- SOLUTION CODE --
 
@@ -17,10 +20,19 @@ enDict = loadDefaultDict()
 
 print "Solving..."
 b = Board(board, enDict)
-paths = b.findPaths(wordLength)
-# words = filter(lambda x: x[0:len(hint)]==hint, words)
-words = map(b.pathToWord, paths)
+solutions = b.solveBoard(wordLengths, 1, known)
 
-print "Found", len(words), "words"
-for w in words:
-	print w
+# Filters duplicate solutions
+solutions = set(map(tuple, solutions))
+
+for s in solutions: print s
+print "Found", len(solutions), "solutions"
+
+# b = Board(board, getDictFromFile("testdict"))
+# path = ()
+# path = tupleAppend(path, (0,0))
+# path = tupleAppend(path, (1,1))
+# path = tupleAppend(path, (2,0))
+# print str(b)
+# print
+# print str(b.removePath(path))

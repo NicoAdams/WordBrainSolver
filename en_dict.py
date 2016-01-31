@@ -1,13 +1,15 @@
 class Trie:
 	
-	# @staticmethod
-	# def root():
-	# 	return Trie("")
-	
 	def __init__(self, value=""):
 		self.value = value
 		self.children = {}
 		self.end = False
+	
+	# def copyShallow(self):
+	# 	newTrie = Trie(self.value)
+	# 	newTrie.children = list(self.children)
+	# 	newTrie.end = self.end
+	# 	return newTrie
 	
 	def getRest(self, word):
 		return word[len(self.value):]
@@ -47,6 +49,23 @@ class Trie:
 		# Returns true if this trie marks the end of a word
 		return self.end
 	
+	def limit(self, prefix):
+		if len(prefix) == 0:
+			return self
+		
+		child = self.getChild(prefix[0])
+		if child is None:
+			return None
+		
+		newChild = child.limit(prefix[1:])
+		if newChild is None:
+			return None
+		
+		newTrie = Trie(self.value)
+		newTrie.children = {newChild.value: newChild}
+		newTrie.end = self.end
+		return newTrie 
+	
 	def __str__(self):
 		return self._toStrAux(0)
 	
@@ -63,7 +82,8 @@ class Trie:
 		result += "\n"
 		
 		for value in self.children:
-			newIndent = indent + (0 if self.value=="" else 1)
+			newIndent = indent + 1
+			"""(0 if self.value=="" else 1)"""
 			result += self.children[value]._toStrAux(newIndent)
 		return result
 
