@@ -29,29 +29,33 @@ class Board:
 			and not c == coord
 		return filter(validCoord, neighbors)
 	
-	def findWords(self, wordLen):
-		# Returns a list of all words of length wordLen on the board
-		words = set()
+	def pathToWord(self, path):
+		# Converts a list of tuples representing a path on the board to a word
+		return "".join(map(self.valueAt, path))
+	
+	def findPaths(self, wordLen):
+		# Returns a list of all valid word paths of length wordLen on the board
+		paths = set()
 		for x in range(self.size):
 			for y in range(self.size):
 				coord = (x,y)
 				
 				# Gets the current word
 				value = self.valueAt(coord)
-				currWord = value
+				currPath = tupleAppend((), coord)
 				
 				# Gets the current trie
-				currTrie = self.trie.getChild(currWord)
+				currTrie = self.trie.getChild(value)
 				if currTrie is None:
 					# If no word in the trie starts with this letter, skips
 					continue
 				
-				words = words.union( \
-					self._findWordsAux(wordLen-1, value, coord, set(), currTrie) \
+				paths = paths.union( \
+					self._findPathsAux(wordLen-1, currPath, coord, set(), currTrie) \
 				)
-		return words
+		return paths
 	
-	def _findWordsAux(self, wordLen, currWord, currCoord, seen, currTrie):
+	def _findPathsAux(self, wordLen, currPath, currCoord, seen, currTrie):
 		# visited: A set containing all visited coordinates
 		
 		# Adds the current coord to seen
@@ -60,10 +64,10 @@ class Board:
 		# Obtains all neighbors that have not yet been visited		
 		neighbors = [n for n in self.getNeighbors(currCoord) if n not in seen]
 		
-		words = set()
+		paths = set()
 		for newCoord in neighbors:
 			value = self.valueAt(newCoord)
-			newWord = currWord + value
+			newPath = tupleAppend(currPath, newCoord)
 			
 			# Gets the next trie, or skips this coord if no valid words in current trie
 			newTrie = currTrie.getChild(value)
@@ -73,15 +77,15 @@ class Board:
 			newWordLen = wordLen-1
 			if newWordLen == 0 and newTrie.isWordEnd():
 				# Have a valid word!
-				words.add(newWord)
+				paths.add(newPath)
 			else:
-				# Adds all valid words extending from this coordinate
-				words = words.union( \
-					self._findWordsAux(newWordLen, newWord, newCoord, set(seen), newTrie) \
+				# Adds all valid word paths extending from this coordinate
+				paths = paths.union( \
+					self._findPathsAux(newWordLen, newPath, newCoord, set(seen), newTrie) \
 				)
 		
-		return words
+		return paths
 	
-	def removeWord(self, word):
+	def removePath(self, path):
 		# Returns all the possible boards
-
+		pass
