@@ -1,14 +1,16 @@
 # -- BOARD INFO HERE --
 
-wordLengths = [4,7,5,4,5]
-known = ["", "", "", "", ""]
+wordLengths = [2,6,4,7,6]
+known = ["no", "pigsty", "", "", "poison"]
 
 board = []
-board.append(list("eakeh"))
-board.append(list("rtspa"))
-board.append(list("ochet"))
-board.append(list("shtec"))
-board.append(list("tomdh"))
+board.append(list("ensty"))
+board.append(list("aiois"))
+board.append(list("nncrg"))
+board.append(list("okaio"))
+board.append(list("pponp"))
+
+solveFor = 5
 
 # -- SOLUTION CODE --
 
@@ -20,19 +22,11 @@ enDict = loadDefaultDict()
 
 print "Solving..."
 b = Board(board, enDict)
-solutions = b.solveBoard(wordLengths, 1, known)
+solutions = b.solveBoard(wordLengths, solveFor, known)
 
 # Filters duplicate solutions
 solutions = set(map(tuple, solutions))
 
-for s in solutions: print s
-print "Found", len(solutions), "solutions"
-
-# b = Board(board, getDictFromFile("testdict"))
-# path = ()
-# path = tupleAppend(path, (0,0))
-# path = tupleAppend(path, (1,1))
-# path = tupleAppend(path, (2,0))
-# print str(b)
-# print
-# print str(b.removePath(path))
+print 
+print "Found", len(solutions), "unique solutions:"
+for s in solutions: print ", ".join(list(s))

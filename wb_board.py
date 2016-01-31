@@ -170,6 +170,10 @@ class Board:
 			newSolution.append(word)
 			
 			if len(wordLengths) == 1:
+				
+				# Prints here for faster feedback
+				print newSolution
+				
 				solutions.append(newSolution)
 			else:
 				# Creates a new board with the original trie
