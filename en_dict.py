@@ -5,12 +5,6 @@ class Trie:
 		self.children = {}
 		self.end = False
 	
-	# def copyShallow(self):
-	# 	newTrie = Trie(self.value)
-	# 	newTrie.children = list(self.children)
-	# 	newTrie.end = self.end
-	# 	return newTrie
-	
 	def getRest(self, word):
 		return word[len(self.value):]
 	
@@ -50,6 +44,8 @@ class Trie:
 		return self.end
 	
 	def limit(self, prefix):
+		# Returns a new trie whose words are limited to those that start
+		# with the letters in prefix
 		if len(prefix) == 0:
 			return self
 		
@@ -65,6 +61,8 @@ class Trie:
 		newTrie.children = {newChild.value: newChild}
 		newTrie.end = self.end
 		return newTrie 
+	
+	
 	
 	def __str__(self):
 		return self._toStrAux(0)
@@ -83,7 +81,6 @@ class Trie:
 		
 		for value in self.children:
 			newIndent = indent + 1
-			"""(0 if self.value=="" else 1)"""
 			result += self.children[value]._toStrAux(newIndent)
 		return result
 

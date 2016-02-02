@@ -1,16 +1,23 @@
 # -- BOARD INFO HERE --
 
-wordLengths = [2,6,4,7,6]
-known = ["no", "pigsty", "", "", "poison"]
+wordLengths = [5,6,4,3,4,3]
+
+known = ["" for i in range(len(wordLengths))]
+known[0] = "igloo"
+# known[1] = "paddle"
 
 board = []
-board.append(list("ensty"))
-board.append(list("aiois"))
-board.append(list("nncrg"))
-board.append(list("okaio"))
-board.append(list("pponp"))
+board.append(list("lorfe"))
+board.append(list("oddal"))
+board.append(list("ooged"))
+board.append(list("lgmdp"))
+board.append(list("gikoa"))
 
-solveFor = 5
+# Number of words to solve for
+solveFor = 6
+
+# True if should print solutions when they are first found
+printAsFound = True
 
 # -- SOLUTION CODE --
 
@@ -21,12 +28,12 @@ print "Loading dictionary..."
 enDict = loadDefaultDict()
 
 print "Solving..."
-b = Board(board, enDict)
+b = Board(board, enDict, verbose=printAsFound)
 solutions = b.solveBoard(wordLengths, solveFor, known)
 
 # Filters duplicate solutions
 solutions = set(map(tuple, solutions))
 
-print 
-print "Found", len(solutions), "unique solutions:"
-for s in solutions: print ", ".join(list(s))
+print "Found", len(solutions), "unique solutions"
+if not printAsFound:
+	for s in solutions: print ", ".join(map(str, list(s)))

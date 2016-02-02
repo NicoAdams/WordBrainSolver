@@ -3,14 +3,30 @@ def tupleAppend(t, e):
 	l = len(t)
 	return tuple( (t[i] if i<l else e) for i in range(l+1))
 
+class Word:
+	def __init__(self, string):
+		self.string = string
+		self.letters = "".join(sorted(list(string)))
+		
+	def __eq__(self, other):
+		return self.letters == other.letters
+	
+	def __hash__(self):
+		return hash(self.letters)
+	
+	def __str__(self):
+		return self.string
+
 class Board:
-	def __init__(self, values, trie):
-		""" 
+	def __init__(self, values, trie, verbose=False):
+		"""
 		values: A matrix of the letters on the board
 		trie: A Trie containing all allowed words
+		verbose: Should print solutions as they are found
 		"""
 		self.values = values
 		self.trie = trie
+		self.verbose = verbose
 		
 		# The length of a side of the board 
 		self.size = len(values)
@@ -18,7 +34,7 @@ class Board:
 	def copy(self):
 		# Copies the boards values. Does not copy the trie
 		newValues = map(lambda x: list(x), self.values)
-		return Board(newValues, self.trie)
+		return Board(newValues, self.trie, self.verbose)
 	
 	def __str__(self):
 		return "\n".join(map(lambda row: "".join(row), self.values))
@@ -136,9 +152,9 @@ class Board:
 				return []
 		
 		# Finds solutions
-		return self._solveBoardAux(wordLengths[:numWords], known, self.trie, [])
+		return self._solveBoardAux(wordLengths[:numWords], known, self.trie, (), set())
 	
-	def _solveBoardAux(self, wordLengths, known, baseTrie, solution):
+	def _solveBoardAux(self, wordLengths, known, baseTrie, solution, solutionSet):
 		
 		# Deals with known info
 		
@@ -156,34 +172,33 @@ class Board:
 			newKnown[0] = ""
 			
 			# Solves the board with the limited trie
-			return newBoard._solveBoardAux(wordLengths, newKnown, baseTrie, solution)
+			return newBoard._solveBoardAux(wordLengths, newKnown, baseTrie, solution, solutionSet)
 		
 		# If no info is known, searches for solutions in the current trie
 		currWordLength = wordLengths[0]
 		paths = self.findPaths(currWordLength)
 		
-		solutions = []
 		for path in paths:
 			
-			word = self.pathToWord(path)
-			newSolution = list(solution)
-			newSolution.append(word)
+			word = Word(self.pathToWord(path))
+			newSolution = tupleAppend(solution, word)
 			
 			if len(wordLengths) == 1:
+				# Found a valid solution
 				
-				# Prints here for faster feedback
-				print newSolution
+				if newSolution not in solutionSet:
+					# Prints here for faster feedback
+					if self.verbose: print "SOLUTION:", ", ".join(map(str, list(newSolution)))
 				
-				solutions.append(newSolution)
+				solutionSet.add(newSolution)
 			else:
 				# Creates a new board with the original trie
 				newBoard = self.removePath(path)
 				newBoard.trie = baseTrie
 				
 				currSolutions = newBoard._solveBoardAux( \
-					wordLengths[1:], known[1:], baseTrie, solution=newSolution \
+					wordLengths[1:], known[1:], baseTrie, newSolution, solutionSet \
 				)
-				solutions.extend(currSolutions)
 		
-		return solutions
+		return solutionSet
 	
